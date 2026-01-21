@@ -1,0 +1,101 @@
+﻿
+> my-v0-project@0.1.0 build
+> next build
+
+   Γû▓ Next.js 16.0.10 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 57s
+   Running TypeScript ...
+node.exe : Failed to 
+compile.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (Fai  
+  led to compile.:String   
+ ) [], RemoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+
+.next/dev/types/validator.t
+s:396:31
+Type error: Type 'typeof im
+port("D:/lcu_portal/app/api
+/applications/[id]/route")'
+ does not satisfy the 
+constraint 'RouteHandlerCon
+fig<"/api/applications/[id]
+">'.
+  Types of property 'GET' 
+are incompatible.
+    Type '(request: 
+NextRequest, { params }: { 
+params: { id: string; }; 
+}) => Promise<NextResponse<
+any>>' is not assignable 
+to type '(request: 
+NextRequest, context: { 
+params: Promise<{ id: 
+string; }>; }) => void | 
+Response | Promise<void | 
+Response>'.
+      Types of parameters 
+'__1' and 'context' are 
+incompatible.
+        Type '{ params: 
+Promise<{ id: string; }>; 
+}' is not assignable to 
+type '{ params: { id: 
+string; }; }'.
+          Types of 
+property 'params' are 
+incompatible.
+            Property 'id' 
+is missing in type 
+'Promise<{ id: string; }>' 
+but required in type '{ 
+id: string; }'.
+
+[0m [90m 394 |[39m   
+type __IsExpected[33m<[39
+m[33mSpecific[39m 
+[36mextends[39m [33mRout
+eHandlerConfig[39m[33m<[
+39m[32m"/api/applications/
+[id]"[39m[33m>>[39m 
+[33m=[39m 
+[33mSpecific[39m
+ [90m 395 |[39m   
+[36mconst[39m handler 
+[33m=[39m {} 
+[36mas[39m 
+[36mtypeof[39m [36mimpor
+t[39m([32m"../../../app/a
+pi/applications/[id]/route.
+js"[39m)
+[31m[1m>[22m[39m[90m 
+396 |[39m   type __Check 
+[33m=[39m __IsExpected[3
+3m<[39m[36mtypeof[39m 
+handler[33m>[39m
+ [90m     |[39m          
+                     
+[31m[1m^[22m[39m
+ [90m 397 |[39m   
+[90m// @ts-ignore[39m
+ [90m 398 |[39m   type 
+__Unused [33m=[39m 
+__Check
+ [90m 399 |[39m }[0m
+Next.js build worker 
+exited with code: 1 and 
+signal: null

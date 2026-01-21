@@ -1,0 +1,120 @@
+﻿   Γû▓ Next.js 16.0.10 (Turbopack)
+   - Environments: .env.local
+
+node.exe :  ΓÜá The 
+"middleware" file 
+convention is 
+deprecated. Please 
+use "proxy" instead. 
+Learn more: https://ne
+xtjs.org/docs/messages
+/middleware-to-proxy
+At line:1 char:1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : 
+NotSpecified: ( ΓÜá 
+Th    e "middl...lewar
+e-to-pro    
+xy:String) [], 
+RemoteExc    eption
+    + 
+FullyQualifiedErrorId 
+    : 
+NativeCommandError
+ 
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 55s
+   Running TypeScript ...
+   Collecting page data using 3 workers ...
+   Generating static pages using 3 workers (0/52) ...
+   Generating static pages using 3 workers (13/52) 
+   Generating static pages using 3 workers (26/52) 
+   Generating static pages using 3 workers (39/52) 
+ Γ£ô Generating static pages using 3 workers (52/52) in 8.8s
+   Finalizing page optimization ...
+
+Route (app)
+Γöî ╞Æ /
+Γö£ Γùï /_not-found
+Γö£ Γùï /about
+Γö£ ╞Æ /admin
+Γö£ ╞Æ /admin/admissions
+Γö£ ╞Æ /admin/admissions/[id]
+Γö£ ╞Æ /admin/blog
+Γö£ ╞Æ /admin/blog/[id]/edit
+Γö£ ╞Æ /admin/blog/new
+Γö£ ╞Æ /admin/courses
+Γö£ ╞Æ /admin/enrollments
+Γö£ ╞Æ /admin/faculty
+Γö£ ╞Æ /admin/payments
+Γö£ ╞Æ /admin/programs
+Γö£ ╞Æ /admin/students
+Γö£ ╞Æ /api/admin/courses
+Γö£ ╞Æ /api/admin/courses/[id]
+Γö£ ╞Æ /api/admin/faculty
+Γö£ ╞Æ /api/admin/faculty/[id]
+Γö£ ╞Æ /api/admin/programs
+Γö£ ╞Æ /api/applications
+Γö£ ╞Æ /api/applications/[id]
+Γö£ ╞Æ /api/applications/[id]/submit
+Γö£ ╞Æ /api/payments/create-plan
+Γö£ ╞Æ /api/payments/process
+Γö£ ╞Æ /apply
+Γö£ Γùï /apply/documents
+Γö£ Γùï /apply/education
+Γö£ Γùï /apply/essay
+Γö£ Γùï /apply/payment
+Γö£ Γùï /apply/personal
+Γö£ Γùï /apply/recommendations
+Γö£ Γùï /apply/review
+Γö£ Γùï /apply/status
+Γö£ ╞Æ /auth/error
+Γö£ Γùï /auth/login
+Γö£ Γùï /auth/sign-up
+Γö£ Γùï /auth/sign-up-success
+Γö£ ╞Æ /blog
+Γö£ ╞Æ /blog/[slug]
+Γö£ Γùï /contact
+Γö£ ╞Æ /dashboard
+Γö£ ╞Æ /dashboard/calendar
+Γö£ ╞Æ /dashboard/chapel
+Γö£ ╞Æ /dashboard/courses
+Γö£ ╞Æ /dashboard/courses/[courseId]
+Γö£ ╞Æ /dashboard/discussions
+Γö£ ╞Æ /dashboard/enroll
+Γö£ ╞Æ /dashboard/grades
+Γö£ ╞Æ /dashboard/payments
+Γö£ ╞Æ /dashboard/profile
+Γö£ ╞Æ /faculty
+Γö£ ╞Æ /faculty/assessments
+Γö£ ╞Æ /faculty/assessments/[id]
+Γö£ ╞Æ /faculty/courses
+Γö£ ╞Æ /faculty/courses/[id]
+Γö£ ╞Æ /faculty/courses/[id]/modules/[moduleId]
+Γö£ ╞Æ /faculty/gradebook
+Γö£ Γùï /faq
+Γö£ Γùï /privacy
+Γö£ ╞Æ /programs
+Γö£ ╞Æ /programs/[id]
+Γö£ ╞Æ /registrar
+Γö£ ╞Æ /registrar/enrollments
+Γö£ ╞Æ /registrar/students
+Γö£ Γùï /robots.txt
+Γö£ ╞Æ /sitemap.xml
+Γöö Γùï /terms
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

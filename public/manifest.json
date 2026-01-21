@@ -1,0 +1,29 @@
+{
+    "name": "Landmark Christian University",
+    "short_name": "LCU",
+    "description": "Pursue your God-given purpose with flexible, self-paced online degree programs rooted in biblical truth and academic excellence.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4a3472",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/images/lcu-logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/lcu-logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "education",
+        "religion"
+    ],
+    "lang": "en-US"
+}
