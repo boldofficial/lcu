@@ -11,26 +11,29 @@ export function SiteFooter() {
                 <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
                     {/* Logo */}
                     <div className="lg:col-span-1">
-                        <div className="flex items-center gap-2 mb-6">
-                            <div className="relative h-12 w-48 bg-white/10 rounded-lg p-1">
-                                <Image
-                                    src="/images/lcu-logo.png"
-                                    alt="Landmark Christian University"
-                                    fill
-                                    className="object-contain object-left"
-                                />
-                            </div>
+                        <div className="mb-6">
+                            <Link href="/">
+                                <div className="relative h-16 w-full max-w-[240px]">
+                                    <Image
+                                        src="/images/lcu-white-logo.png"
+                                        alt="Landmark Christian University"
+                                        fill
+                                        className="object-contain object-left"
+                                        priority
+                                    />
+                                </div>
+                            </Link>
                         </div>
-                        <p className="text-sm text-white/70 leading-relaxed">
+                        <p className="text-sm text-white leading-relaxed">
                             Empowering Christian leaders through
                             Christ-centered education across the
                             globe.
                         </p>
                         <div className="mt-6 flex gap-4">
-                            <span className="text-white/70 hover:text-[#d4a843] cursor-pointer transition-colors">
+                            <span className="text-white hover:text-[#d4a843] cursor-pointer transition-colors">
                                 <Facebook className="h-5 w-5" />
                             </span>
-                            <span className="text-white/70 hover:text-[#d4a843] cursor-pointer transition-colors">
+                            <span className="text-white hover:text-[#d4a843] cursor-pointer transition-colors">
                                 <Twitter className="h-5 w-5" />
                             </span>
                         </div>
@@ -38,7 +41,7 @@ export function SiteFooter() {
                     {/* Quick Link */}
                     <div>
                         <h4 className="font-bold text-lg text-white mb-6">Quick Link</h4>
-                        <ul className="space-y-3 text-sm text-white/70">
+                        <ul className="space-y-3 text-sm text-white">
                             <li><Link href="/about" className="hover:text-[#d4a843] transition-colors">About Us</Link></li>
                             <li><Link href="/programs" className="hover:text-[#d4a843] transition-colors">Academics</Link></li>
                             <li><Link href="/apply" className="hover:text-[#d4a843] transition-colors">Admissions</Link></li>
@@ -50,7 +53,7 @@ export function SiteFooter() {
                     {/* Programs */}
                     <div>
                         <h4 className="font-bold text-lg text-white mb-6">Programs</h4>
-                        <ul className="space-y-3 text-sm text-white/70">
+                        <ul className="space-y-3 text-sm text-white">
                             <li><Link href="/programs" className="hover:text-[#d4a843] transition-colors">Bachelor&apos;s Degrees</Link></li>
                             <li><Link href="/programs" className="hover:text-[#d4a843] transition-colors">Master&apos;s Degrees</Link></li>
                             <li><Link href="/programs" className="hover:text-[#d4a843] transition-colors">Doctoral Degrees</Link></li>
@@ -61,7 +64,7 @@ export function SiteFooter() {
                     {/* Directors */}
                     <div>
                         <h4 className="font-bold text-lg text-white mb-6">Directors</h4>
-                        <ul className="space-y-3 text-sm text-white/70">
+                        <ul className="space-y-3 text-sm text-white">
                             <li className="flex items-start gap-3">
                                 <MapPin className="h-5 w-5 mt-0.5 shrink-0 text-[#d4a843]" />
                                 <span>1820 St. Marks 56, Largo<br />United States</span>
@@ -75,7 +78,7 @@ export function SiteFooter() {
                     {/* Contacts */}
                     <div>
                         <h4 className="font-bold text-lg text-white mb-6">Contacts</h4>
-                        <ul className="space-y-3 text-sm text-white/70">
+                        <ul className="space-y-3 text-sm text-white">
                             <li className="flex items-center gap-3">
                                 <Phone className="h-4 w-4 shrink-0 text-[#d4a843]" />
                                 <span>+1 272 458 4332</span>
@@ -91,7 +94,7 @@ export function SiteFooter() {
                         </ul>
                     </div>
                 </div>
-                <div className="mt-16 border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
+                <div className="mt-16 border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white">
                     <p>&copy; {new Date().getFullYear()} Landmark Christian University All Rights Reserved.</p>
                     <p>
                         Designed and Developed by{" "}

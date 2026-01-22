@@ -98,20 +98,19 @@ export function DashboardSidebar({ role, userName, userEmail, onSignOut }: Sideb
   return (
     <div className="flex h-screen w-64 flex-col bg-sidebar text-sidebar-foreground">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 p-1">
+      <div className="flex h-40 flex-col items-center justify-center border-b border-sidebar-border px-4 py-8">
+        <Link href="/" className="relative h-28 w-full mb-4">
           <Image
-            src="/images/lcu-logo.png"
-            alt="LCU Logo"
-            width={40}
-            height={40}
-            className="h-full w-full object-contain"
+            src="/images/lcu-white-logo.png"
+            alt="Landmark Christian University"
+            fill
+            className="object-contain"
+            priority
           />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-bold">LCU Portal</span>
-          <span className="text-xs capitalize text-sidebar-foreground/70">{role} Dashboard</span>
-        </div>
+        </Link>
+        <span className="w-full text-center text-[10px] uppercase tracking-[0.2em] text-sidebar-foreground/40 font-bold">
+          {role} Dashboard
+        </span>
       </div>
 
       {/* Navigation */}

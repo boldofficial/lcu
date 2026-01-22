@@ -40,20 +40,19 @@ export function AdminSidebar({ profile }: { profile: Profile }) {
 
   return (
     <aside className="hidden w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
-      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 p-1">
+      <div className="flex h-40 flex-col items-center justify-center border-b border-sidebar-border px-4 py-8">
+        <Link href="/" className="relative h-28 w-full mb-4">
           <Image
-            src="/images/lcu-logo.png"
-            alt="LCU Logo"
-            width={40}
-            height={40}
-            className="h-full w-full object-contain"
+            src="/images/lcu-white-logo.png"
+            alt="Landmark Christian University"
+            fill
+            className="object-contain"
+            priority
           />
-        </div>
-        <div className="flex flex-col">
-          <span className="font-bold text-sidebar-foreground">LCU Admin</span>
-          <span className="text-xs text-sidebar-foreground/70">Portal</span>
-        </div>
+        </Link>
+        <span className="w-full text-center text-[10px] uppercase tracking-[0.2em] text-sidebar-foreground/40 font-bold">
+          Admin Dashboard
+        </span>
       </div>
 
       <nav className="flex-1 space-y-1 p-4">
