@@ -216,6 +216,33 @@ export async function toggleAssessmentPublish(assessmentId: string, isPublished:
         return { error: "Unauthorized" }
     }
 
+    // Verify user is instructor of the course or admin
+    const { data: assessment } = await supabase
+        .from("assessments")
+        .select("course_id, course:courses(instructor_id)")
+        .eq("id", assessmentId)
+        .single()
+
+    if (!assessment) {
+        return { error: "Assessment not found" }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const courseData = assessment.course as any
+    const instructorId = courseData?.instructor_id
+    if (instructorId !== user.id) {
+        // Check if admin
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single()
+
+        if (profile?.role !== "admin") {
+            return { error: "You are not authorized to modify this assessment" }
+        }
+    }
+
     const { error } = await supabase
         .from("assessments")
         .update({ is_published: !isPublished })
@@ -240,6 +267,33 @@ export async function deleteAssessment(assessmentId: string) {
         return { error: "Unauthorized" }
     }
 
+    // Verify user is instructor of the course or admin
+    const { data: assessment } = await supabase
+        .from("assessments")
+        .select("course_id, course:courses(instructor_id)")
+        .eq("id", assessmentId)
+        .single()
+
+    if (!assessment) {
+        return { error: "Assessment not found" }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const courseData = assessment.course as any
+    const instructorId = courseData?.instructor_id
+    if (instructorId !== user.id) {
+        // Check if admin
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single()
+
+        if (profile?.role !== "admin") {
+            return { error: "You are not authorized to delete this assessment" }
+        }
+    }
+
     const { error } = await supabase
         .from("assessments")
         .delete()
@@ -252,6 +306,7 @@ export async function deleteAssessment(assessmentId: string) {
 
     return { success: true }
 }
+
 
 interface GradeSubmissionData {
     submission_id: string
