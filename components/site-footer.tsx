@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Twitter, MapPin, Phone, Mail } from "lucide-react"
+import { Facebook, Twitter, Instagram, MapPin, Phone, Mail } from "lucide-react"
 
 export function SiteFooter() {
     return (
@@ -30,12 +30,15 @@ export function SiteFooter() {
                             globe.
                         </p>
                         <div className="mt-6 flex gap-4">
-                            <span className="text-white hover:text-[#d4a843] cursor-pointer transition-colors">
+                            <a href="https://facebook.com/lcuniversity" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#d4a843] transition-colors">
                                 <Facebook className="h-5 w-5" />
-                            </span>
-                            <span className="text-white hover:text-[#d4a843] cursor-pointer transition-colors">
+                            </a>
+                            <a href="https://twitter.com/lcuniversity" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#d4a843] transition-colors">
                                 <Twitter className="h-5 w-5" />
-                            </span>
+                            </a>
+                            <a href="https://instagram.com/lcuniversity" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#d4a843] transition-colors">
+                                <Instagram className="h-5 w-5" />
+                            </a>
                         </div>
                     </div>
                     {/* Quick Link */}
