@@ -3,7 +3,20 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
+import { z } from "zod"
+
+const markLessonCompleteSchema = z.object({
+    lessonId: z.string().uuid(),
+    courseId: z.string().uuid()
+})
+
 export async function markLessonComplete(lessonId: string, courseId: string) {
+    const validation = markLessonCompleteSchema.safeParse({ lessonId, courseId })
+    if (!validation.success) {
+        console.error("Validation error:", validation.error)
+        return { error: "Invalid lesson or course ID" }
+    }
+
     const supabase = await createClient()
 
     const {

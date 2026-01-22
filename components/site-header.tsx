@@ -43,37 +43,37 @@ export function SiteHeader() {
                     <nav className="hidden items-center gap-6 lg:flex">
                         <Link
                             href="/"
-                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#4a3472]"
+                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#261642]"
                         >
                             HOME
                         </Link>
                         <Link
                             href="/programs"
-                            className="flex items-center gap-1 text-sm font-medium text-gray-700 transition-colors hover:text-[#4a3472]"
+                            className="flex items-center gap-1 text-sm font-medium text-gray-700 transition-colors hover:text-[#261642]"
                         >
                             PROGRAMS <ChevronDown className="h-3 w-3" />
                         </Link>
                         <Link
                             href="/about"
-                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#4a3472]"
+                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#261642]"
                         >
                             ABOUT
                         </Link>
                         <Link
                             href="/blog"
-                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#4a3472]"
+                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#261642]"
                         >
                             BLOG
                         </Link>
                         <Link
                             href="/faq"
-                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#4a3472]"
+                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#261642]"
                         >
                             FAQ
                         </Link>
                         <Link
                             href="/contact"
-                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#4a3472]"
+                            className="text-sm font-medium text-gray-700 transition-colors hover:text-[#261642]"
                         >
                             CONTACT
                         </Link>
@@ -81,7 +81,7 @@ export function SiteHeader() {
                 </div>
                 <div className="flex items-center gap-3">
                     <Link href="/auth/login" className="hidden sm:block">
-                        <Button variant="outline" size="sm" className="rounded-full border-[#4a3472] text-[#4a3472] hover:bg-[#4a3472] hover:text-white">
+                        <Button variant="outline" size="sm" className="rounded-full border-[#261642] text-[#261642] hover:bg-[#261642] hover:text-white">
                             Login
                         </Button>
                     </Link>
@@ -135,7 +135,7 @@ export function SiteHeader() {
                                         </Button>
                                     </Link>
                                     <Link href="/apply" onClick={() => setOpen(false)}>
-                                        <Button className="w-full rounded-full bg-[#4a3472] text-white hover:bg-[#3a2857]">
+                                        <Button className="w-full rounded-full bg-[#261642] text-white hover:bg-[#1a0f2e]">
                                             Apply Now
                                         </Button>
                                     </Link>

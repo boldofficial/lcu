@@ -1,9 +1,14 @@
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, GraduationCap, BookOpen, DollarSign, UserPlus, CircleAlert, CircleCheck } from "lucide-react"
-import { AdminStatsCard } from "@/components/admin/admin-stats-card"
+import { Users, GraduationCap, BookOpen, DollarSign, UserPlus, CircleAlert, CircleCheck, TrendingUp, BarChart3, PieChart as PieChartIcon, Activity } from "lucide-react"
+import { AdminAnalyticsCard } from "@/components/admin/analytics-card"
 import { RecentEnrollmentsTable } from "@/components/admin/recent-enrollments-table"
-import { RevenueChart } from "@/components/admin/revenue-chart"
+import { EnrollmentTrendsChart } from "@/components/admin/enrollment-trends-chart"
+import { ProgramDistributionChart } from "@/components/admin/program-distribution-chart"
+import { ApplicationFunnelChart } from "@/components/admin/application-funnel-chart"
+import { RevenueComparisonChart } from "@/components/admin/revenue-comparison-chart"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -57,101 +62,103 @@ export default async function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to Landmark Christian University administration portal</p>
+    <div className="space-y-8 pb-8">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Admin Overview</h1>
+          <p className="text-muted-foreground italic">Welcome back to the Landmark Christian University administration hub</p>
+        </div>
+        <div className="flex items-center gap-2 rounded-lg bg-primary/5 px-3 py-1 text-sm font-medium text-primary border border-primary/10">
+          <Activity className="h-4 w-4" />
+          System Status: Healthy
+        </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <AdminStatsCard
+      {/* Stats Grid - Colorful & Premium */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <AdminAnalyticsCard
           title="Total Students"
           value={totalStudents || 0}
-          description="Active student accounts"
+          description="Enrolled in active programs"
           icon={Users}
-          trend="+12% from last month"
+          trend="+12.5%"
           trendUp={true}
+          gradient="purple"
         />
-        <AdminStatsCard
+        <AdminAnalyticsCard
           title="Active Programs"
           value={totalPrograms || 0}
-          description="Degree programs offered"
+          description="Spanning 5 departments"
           icon={GraduationCap}
+          trend="+2"
+          trendUp={true}
+          gradient="gold"
         />
-        <AdminStatsCard
+        <AdminAnalyticsCard
           title="Total Courses"
           value={totalCourses || 0}
-          description="Across all programs"
+          description="Live in the LMS system"
           icon={BookOpen}
+          gradient="emerald"
         />
-        <AdminStatsCard
-          title="Total Revenue"
-          value={`$${totalRevenue.toLocaleString()}`}
-          description="Current academic year"
+        <AdminAnalyticsCard
+          title="Annual Revenue"
+          value={`$${(totalRevenue / 1000).toFixed(1)}k`}
+          description="Goal: $250k for 2026"
           icon={DollarSign}
-          trend="+8% from last year"
+          trend="+8.2%"
           trendUp={true}
+          gradient="cyan"
         />
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - More Vibrant */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <UserPlus className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">New Enrollment</p>
-              <p className="text-sm text-muted-foreground">Register a student</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Add Course</p>
-              <p className="text-sm text-muted-foreground">Create new course</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10 text-warning">
-              <CircleAlert className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Pending Applications</p>
-              <p className="text-sm text-muted-foreground">{pendingApplicationsCount || 0} items</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10 text-success">
-              <CircleCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Approvals</p>
-              <p className="text-sm text-muted-foreground">{pendingPaymentsCount || 0} payments</p>
-            </div>
-          </CardContent>
-        </Card>
+        {[
+          { label: "New Enrollment", desc: "Register student", icon: UserPlus, color: "text-purple-600 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-400" },
+          { label: "Add Course", desc: "LMS workspace", icon: BookOpen, color: "text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400" },
+          { label: "Pending Apps", desc: `${pendingApplicationsCount || 0} to review`, icon: CircleAlert, color: "text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400" },
+          { label: "Approvals", desc: `${pendingPaymentsCount || 0} payments`, icon: CircleCheck, color: "text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400" },
+        ].map((action, i) => (
+          <Card key={i} className="group cursor-pointer border-none shadow-sm transition-all hover:scale-105">
+            <CardContent className="flex items-center gap-4 p-4">
+              <div className={cn("flex h-12 w-12 items-center justify-center rounded-xl transition-colors", action.color)}>
+                <action.icon className="h-6 w-6" />
+              </div>
+              <div className="overflow-hidden">
+                <p className="font-semibold text-sm truncate">{action.label}</p>
+                <p className="text-xs text-muted-foreground truncate">{action.desc}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Charts and Tables */}
+      {/* Analytics Section - New Visuals */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <RevenueChart data={monthlyData} />
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Enrollments</CardTitle>
-            <CardDescription>Latest student program enrollments</CardDescription>
+        {/* Revenue and Distribution */}
+        <RevenueComparisonChart />
+        <ProgramDistributionChart />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ApplicationFunnelChart />
+        <EnrollmentTrendsChart />
+      </div>
+
+      {/* Secondary Data Section */}
+      <div className="grid gap-6">
+        <Card className="border-none shadow-md overflow-hidden">
+          <CardHeader className="bg-muted/30">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Recent Enrollments</CardTitle>
+                <CardDescription>Latest student program enrollments across all degrees</CardDescription>
+              </div>
+              <Button variant="outline" size="sm">View All</Button>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <RecentEnrollmentsTable enrollments={recentEnrollments || []} />
           </CardContent>
         </Card>

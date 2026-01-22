@@ -44,7 +44,7 @@ export default async function HomePage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#291c40] via-[#4a3472]/90 to-[#4a3472]/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1a0f2e] via-[#261642]/90 to-[#261642]/60" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 w-full">
@@ -64,7 +64,7 @@ export default async function HomePage() {
                 </Button>
               </Link>
               <Link href="/apply">
-                <Button variant="outline" className="h-14 min-w-[180px] rounded-full border-2 border-white bg-transparent px-8 text-lg font-semibold text-white transition-all hover:bg-white hover:text-[#4a3472]">
+                <Button variant="outline" className="h-14 min-w-[180px] rounded-full border-2 border-white bg-transparent px-8 text-lg font-semibold text-white transition-all hover:bg-white hover:text-[#261642]">
                   Apply Now
                 </Button>
               </Link>
@@ -107,7 +107,7 @@ export default async function HomePage() {
             </div>
             <div>
               <h2 className="text-3xl font-bold leading-tight md:text-4xl tracking-tight">
-                <span className="text-[#4a3472] block">Become A Kingdom Leader</span>
+                <span className="text-[#261642] block">Become A Kingdom Leader</span>
                 <span className="text-[#d4a843] block mt-2">With Landmark Christian University</span>
               </h2>
               <div className="mt-8 space-y-6 text-lg text-gray-600 leading-relaxed">
@@ -139,7 +139,7 @@ export default async function HomePage() {
       </section>
 
       {/* Why Choose Section */}
-      <section className="bg-[#4a3472] py-20 lg:py-32 text-white relative overflow-hidden">
+      <section className="bg-[#261642] py-20 lg:py-32 text-white relative overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 -mr-24 -mt-24 h-96 w-96 rounded-full bg-[#d4a843] opacity-10 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-24 -mb-24 h-96 w-96 rounded-full bg-[#d4a843] opacity-10 blur-3xl"></div>
@@ -235,7 +235,7 @@ export default async function HomePage() {
       <section id="programs" className="bg-gray-50 py-20 lg:py-32">
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-[#4a3472] md:text-5xl">Our Degree Programs</h2>
+            <h2 className="text-3xl font-bold text-[#261642] md:text-5xl">Our Degree Programs</h2>
             <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-600 leading-relaxed">
               Pursue a spiritual and career goal, growth with credentials from our online distance and open
               programs, designed to fulfill your calling. Designed to prepare you for purposeful life for
@@ -254,7 +254,7 @@ export default async function HomePage() {
                 />
               </div>
               <CardContent className="flex flex-1 flex-col p-8">
-                <h3 className="mb-3 text-xl font-bold text-[#4a3472] md:text-2xl">Bachelor Degree Programs</h3>
+                <h3 className="mb-3 text-xl font-bold text-[#261642] md:text-2xl">Bachelor Degree Programs</h3>
                 <p className="mb-8 text-gray-600 leading-relaxed flex-1">
                   Explore our Bachelor programs in Christian Leadership, Ministry and more in coaching for Theology, Divinity, Religious arts, and more.
                 </p>
@@ -278,7 +278,7 @@ export default async function HomePage() {
                 />
               </div>
               <CardContent className="flex flex-1 flex-col p-8">
-                <h3 className="mb-3 text-xl font-bold text-[#4a3472] md:text-2xl">Master&apos;s Degree Programs</h3>
+                <h3 className="mb-3 text-xl font-bold text-[#261642] md:text-2xl">Master&apos;s Degree Programs</h3>
                 <p className="mb-8 text-gray-600 leading-relaxed flex-1">
                   Take your faith to the next level with in-depth ministry and theological masterclass with our M.Div leadership programs.
                 </p>
@@ -302,7 +302,7 @@ export default async function HomePage() {
                 />
               </div>
               <CardContent className="flex flex-1 flex-col p-8">
-                <h3 className="mb-3 text-xl font-bold text-[#4a3472] md:text-2xl">Doctoral Degree Programs</h3>
+                <h3 className="mb-3 text-xl font-bold text-[#261642] md:text-2xl">Doctoral Degree Programs</h3>
                 <p className="mb-8 text-gray-600 leading-relaxed flex-1">
                   Perfect for ministry leaders, our Christian Leadership Doctorate programs in Christian Counseling with emphasis in Society, Theology and more.
                 </p>
@@ -329,7 +329,7 @@ export default async function HomePage() {
               </p>
             </div>
             <Link href="/blog" className="hidden md:block">
-              <Button variant="outline" className="border-[#4a3472] text-[#4a3472]">View All News</Button>
+              <Button variant="outline" className="border-[#261642] text-[#261642]">View All News</Button>
             </Link>
           </div>
 
@@ -354,7 +354,7 @@ export default async function HomePage() {
                       <Calendar className="h-3 w-3" />
                       {new Date(post.published_at!).toLocaleDateString()}
                     </div>
-                    <h3 className="text-xl font-bold text-[#4a3472] line-clamp-2 leading-tight">
+                    <h3 className="text-xl font-bold text-[#261642] line-clamp-2 leading-tight">
                       <Link href={`/blog/${post.slug}`} className="hover:underline">
                         {post.title}
                       </Link>
@@ -376,7 +376,7 @@ export default async function HomePage() {
 
           <div className="mt-8 text-center md:hidden">
             <Link href="/blog">
-              <Button variant="outline" className="border-[#4a3472] text-[#4a3472]">View All News</Button>
+              <Button variant="outline" className="border-[#261642] text-[#261642]">View All News</Button>
             </Link>
           </div>
         </div>
@@ -387,13 +387,13 @@ export default async function HomePage() {
         {/* Decorative line art background */}
         <div className="absolute inset-0 opacity-5">
           <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0,50 Q25,30 50,50 T100,50" stroke="#4a3472" strokeWidth="0.5" fill="none" />
-            <path d="M0,60 Q25,40 50,60 T100,60" stroke="#4a3472" strokeWidth="0.5" fill="none" />
+            <path d="M0,50 Q25,30 50,50 T100,50" stroke="#261642" strokeWidth="0.5" fill="none" />
+            <path d="M0,60 Q25,40 50,60 T100,60" stroke="#261642" strokeWidth="0.5" fill="none" />
           </svg>
         </div>
         <div className="relative mx-auto max-w-7xl px-6 md:px-12 text-center">
           <div className="mx-auto max-w-4xl">
-            <h2 className="text-3xl font-bold text-[#4a3472] md:text-5xl tracking-tight">
+            <h2 className="text-3xl font-bold text-[#261642] md:text-5xl tracking-tight">
               Ready To Start Your Online Christian Degree Journey?
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
@@ -408,7 +408,7 @@ export default async function HomePage() {
                 </Button>
               </Link>
               <Link href="/programs">
-                <Button variant="outline" className="h-14 min-w-[200px] rounded-full border-[#4a3472] text-lg font-semibold text-[#4a3472] hover:bg-[#4a3472] hover:text-white">
+                <Button variant="outline" className="h-14 min-w-[200px] rounded-full border-[#261642] text-lg font-semibold text-[#261642] hover:bg-[#261642] hover:text-white">
                   View All Programs
                 </Button>
               </Link>
@@ -418,13 +418,13 @@ export default async function HomePage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="bg-[#4a3472] py-12">
+      <section className="bg-[#261642] py-12">
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
             <div className="text-white text-center lg:text-left">
-              <h4 className="text-2xl font-bold">Join With Us, Subscribe Our Newsletter</h4>
+              <h4 className="text-2xl font-bold">Subscribe to Our Newsletter</h4>
               <p className="mt-2 text-white/80">
-                Stay up to date at LCU daily exclusive news. Receive a monthly digest.
+                Stay updated with the latest campus news, academic insights, and stories of global impact from Landmark Christian University.
               </p>
             </div>
             <div className="flex w-full max-w-md gap-3">

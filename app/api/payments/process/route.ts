@@ -2,8 +2,25 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { processPayment, type PaymentMethod } from "@/lib/payments"
 
+import { paymentProcessSchema } from "@/lib/validations/payment"
+
+import { headers } from "next/headers"
+import { rateLimit } from "@/lib/ratelimit"
+
+const limiter = rateLimit({
+  interval: 60 * 1000, // 60 seconds
+  uniqueTokenPerInterval: 500, // Max 500 users per second
+})
+
 export async function POST(request: Request) {
   const supabase = await createClient()
+
+  const ip = (await headers()).get("x-forwarded-for") ?? "127.0.0.1"
+  const { isRateLimited } = await limiter.check(5, ip) // 5 requests per minute
+
+  if (isRateLimited) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+  }
 
   const {
     data: { user },
@@ -15,7 +32,13 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { paymentId, paymentPlanId, amount, method, cardDetails } = body
+    const validation = paymentProcessSchema.safeParse(body)
+
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error.errors[0].message }, { status: 400 })
+    }
+
+    const { paymentId, paymentPlanId, amount, method, cardDetails } = validation.data
 
     // Verify the payment belongs to this user
     const { data: payment, error: paymentError } = await supabase

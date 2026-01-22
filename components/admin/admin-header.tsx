@@ -18,6 +18,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { createClient } from "@/lib/supabase/client"
 import type { Profile } from "@/lib/types"
 
+import { NotificationBell } from "@/components/notifications/notification-bell"
+
 export function AdminHeader({ profile }: { profile: Profile }) {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
@@ -83,10 +85,7 @@ export function AdminHeader({ profile }: { profile: Profile }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-destructive" />
-        </Button>
+        <NotificationBell userId={profile.id} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

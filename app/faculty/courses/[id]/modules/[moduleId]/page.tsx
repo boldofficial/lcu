@@ -51,7 +51,9 @@ import { MarkdownEditor } from "@/components/lms/markdown-editor"
 import { FileUploader, AttachmentList } from "@/components/lms/file-uploader"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { createAssessment, toggleAssessmentPublish, deleteAssessment } from "@/app/actions/assignments"
-import type { AssessmentType } from "@/lib/types"
+import { getQuizQuestions, addQuizQuestion, deleteQuizQuestion, updateQuizQuestion } from "@/app/actions/quiz"
+import { QuizQuestionEditor } from "@/components/lms/quiz-question-editor"
+import type { AssessmentType, QuizQuestion } from "@/lib/types"
 
 interface Attachment {
     name: string
@@ -127,8 +129,20 @@ export default function ModuleEditorPage({
         due_date: "",
         attachment_url: "",
         submission_type: "both" as "file" | "text" | "both",
+        // Quiz-specific settings
+        time_limit_minutes: null as number | null,
+        shuffle_questions: false,
+        show_feedback: true,
     })
     const [submittingAssessment, setSubmittingAssessment] = useState(false)
+
+    // Quiz Editor state
+    const [quizEditorOpen, setQuizEditorOpen] = useState(false)
+    const [quizAssessmentId, setQuizAssessmentId] = useState<string | null>(null)
+    const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
+    const [loadingQuestions, setLoadingQuestions] = useState(false)
+    const [addingQuestion, setAddingQuestion] = useState(false)
+    const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null)
 
     // Editable module fields
     const [moduleTitle, setModuleTitle] = useState("")
@@ -314,6 +328,9 @@ export default function ModuleEditorPage({
             due_date: "",
             attachment_url: "",
             submission_type: "both",
+            time_limit_minutes: null,
+            shuffle_questions: false,
+            show_feedback: true,
         })
         setAddAssessmentOpen(true)
     }
@@ -329,6 +346,9 @@ export default function ModuleEditorPage({
             due_date: assessment.due_date ? new Date(assessment.due_date).toISOString().slice(0, 16) : "",
             attachment_url: assessment.attachment_url || "",
             submission_type: assessment.submission_type || "both",
+            time_limit_minutes: assessment.time_limit_minutes || null,
+            shuffle_questions: assessment.shuffle_questions || false,
+            show_feedback: assessment.show_correct_answers !== false,
         })
         setAddAssessmentOpen(true)
     }
@@ -356,6 +376,9 @@ export default function ModuleEditorPage({
                     due_date: assessmentForm.due_date || null,
                     attachment_url: assessmentForm.attachment_url || null,
                     submission_type: assessmentForm.submission_type,
+                    time_limit_minutes: assessmentForm.time_limit_minutes,
+                    shuffle_questions: assessmentForm.shuffle_questions,
+                    show_correct_answers: assessmentForm.show_feedback,
                 })
                 .eq("id", editingAssessment.id)
 
@@ -379,6 +402,9 @@ export default function ModuleEditorPage({
                 due_date: assessmentForm.due_date || undefined,
                 attachment_url: assessmentForm.attachment_url || undefined,
                 submission_type: assessmentForm.submission_type,
+                time_limit_minutes: assessmentForm.time_limit_minutes || undefined,
+                shuffle_questions: assessmentForm.shuffle_questions,
+                show_feedback: assessmentForm.show_feedback,
             })
 
             if (result.error) {
@@ -410,6 +436,80 @@ export default function ModuleEditorPage({
         } else {
             toast.success("Assessment deleted")
             fetchModule()
+        }
+    }
+
+    async function openQuizEditor(assessmentId: string) {
+        setQuizAssessmentId(assessmentId)
+        setQuizEditorOpen(true)
+        setLoadingQuestions(true)
+
+        const result = await getQuizQuestions(assessmentId)
+        if (result.error) {
+            toast.error(result.error)
+        } else {
+            setQuizQuestions(result.data || [])
+        }
+        setLoadingQuestions(false)
+    }
+
+    async function handleAddQuestion(questionData: Omit<QuizQuestion, "id" | "created_at" | "updated_at">) {
+        if (!quizAssessmentId) return
+
+        const result = await addQuizQuestion({
+            assessment_id: quizAssessmentId,
+            question_text: questionData.question_text,
+            question_type: questionData.question_type,
+            options: questionData.options,
+            correct_answer_index: questionData.correct_answer_index,
+            points: questionData.points,
+            order_index: quizQuestions.length
+        })
+
+        if (result.error) {
+            toast.error(result.error)
+        } else {
+            toast.success("Question added!")
+            setAddingQuestion(false)
+            // Refresh questions
+            const refreshed = await getQuizQuestions(quizAssessmentId)
+            if (refreshed.data) setQuizQuestions(refreshed.data)
+        }
+    }
+
+    async function handleDeleteQuestion(questionId: string) {
+        if (!confirm("Delete this question?")) return
+
+        const result = await deleteQuizQuestion(questionId)
+        if (result.error) {
+            toast.error(result.error)
+        } else {
+            toast.success("Question deleted")
+            setQuizQuestions(prev => prev.filter(q => q.id !== questionId))
+        }
+    }
+
+    async function handleEditQuestion(questionData: Omit<QuizQuestion, "id" | "created_at" | "updated_at">) {
+        if (!editingQuestionId) return
+
+        const result = await updateQuizQuestion(editingQuestionId, {
+            question_text: questionData.question_text,
+            question_type: questionData.question_type,
+            options: questionData.options,
+            correct_answer_index: questionData.correct_answer_index,
+            points: questionData.points
+        })
+
+        if (result.error) {
+            toast.error(result.error)
+        } else {
+            toast.success("Question updated!")
+            setEditingQuestionId(null)
+            // Refresh questions
+            if (quizAssessmentId) {
+                const refreshed = await getQuizQuestions(quizAssessmentId)
+                if (refreshed.data) setQuizQuestions(refreshed.data)
+            }
         }
     }
 
@@ -754,6 +854,17 @@ export default function ModuleEditorPage({
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-2">
+                                            {assessment.assessment_type === 'quiz' && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => openQuizEditor(assessment.id)}
+                                                    title="Manage Questions"
+                                                >
+                                                    <FileQuestion className="mr-1 h-4 w-4" />
+                                                    Questions
+                                                </Button>
+                                            )}
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
@@ -883,6 +994,59 @@ export default function ModuleEditorPage({
                                 </div>
                             </div>
 
+                            {/* Quiz-specific settings */}
+                            {assessmentForm.assessment_type === 'quiz' && (
+                                <div className="space-y-4 border-t pt-4">
+                                    <h4 className="font-medium text-sm">Quiz Settings</h4>
+                                    <div className="grid gap-4 sm:grid-cols-3">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="time-limit">Time Limit (minutes)</Label>
+                                            <Input
+                                                id="time-limit"
+                                                type="number"
+                                                placeholder="No limit"
+                                                value={assessmentForm.time_limit_minutes || ""}
+                                                onChange={(e) =>
+                                                    setAssessmentForm({
+                                                        ...assessmentForm,
+                                                        time_limit_minutes: e.target.value ? parseInt(e.target.value) : null
+                                                    })
+                                                }
+                                            />
+                                            <p className="text-xs text-muted-foreground">Leave empty for no time limit</p>
+                                        </div>
+                                        <div className="flex items-center space-x-2 pt-6">
+                                            <input
+                                                type="checkbox"
+                                                id="shuffle-questions"
+                                                checked={assessmentForm.shuffle_questions}
+                                                onChange={(e) =>
+                                                    setAssessmentForm({ ...assessmentForm, shuffle_questions: e.target.checked })
+                                                }
+                                                className="h-4 w-4 rounded border-gray-300"
+                                            />
+                                            <Label htmlFor="shuffle-questions" className="text-sm font-normal">
+                                                Shuffle questions
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2 pt-6">
+                                            <input
+                                                type="checkbox"
+                                                id="show-feedback"
+                                                checked={assessmentForm.show_feedback}
+                                                onChange={(e) =>
+                                                    setAssessmentForm({ ...assessmentForm, show_feedback: e.target.checked })
+                                                }
+                                                className="h-4 w-4 rounded border-gray-300"
+                                            />
+                                            <Label htmlFor="show-feedback" className="text-sm font-normal">
+                                                Show correct answers after submission
+                                            </Label>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="space-y-2">
                                 <Label>Instructions / Description</Label>
                                 <RichTextEditor
@@ -924,6 +1088,109 @@ export default function ModuleEditorPage({
                             <Button onClick={handleSaveAssessment} disabled={submittingAssessment}>
                                 {submittingAssessment && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {editingAssessment ? "Update Assessment" : "Create Assessment"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Quiz Questions Editor Dialog */}
+                <Dialog open={quizEditorOpen} onOpenChange={setQuizEditorOpen}>
+                    <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>Manage Quiz Questions</DialogTitle>
+                            <DialogDescription>
+                                Add, edit, or remove questions for this quiz. Students will see these questions when taking the quiz.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {loadingQuestions ? (
+                            <div className="flex items-center justify-center py-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {/* Existing Questions */}
+                                {quizQuestions.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {quizQuestions.map((question, index) => (
+                                            editingQuestionId === question.id ? (
+                                                <QuizQuestionEditor
+                                                    key={question.id}
+                                                    assessmentId={quizAssessmentId || ""}
+                                                    existingQuestion={question}
+                                                    onSave={handleEditQuestion}
+                                                    onCancel={() => setEditingQuestionId(null)}
+                                                />
+                                            ) : (
+                                                <Card key={question.id}>
+                                                    <CardHeader className="pb-2">
+                                                        <div className="flex items-start justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                <Badge variant="secondary">Q{index + 1}</Badge>
+                                                                <Badge variant="outline">{question.points} pt{question.points > 1 ? "s" : ""}</Badge>
+                                                            </div>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => setEditingQuestionId(question.id)}
+                                                                title="Edit question"
+                                                            >
+                                                                <Pencil className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => handleDeleteQuestion(question.id)}
+                                                                className="text-destructive hover:text-destructive"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                        <CardTitle className="text-base">{question.question_text}</CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent>
+                                                        <div className="space-y-1">
+                                                            {question.options.map((option, optIndex) => (
+                                                                <div
+                                                                    key={optIndex}
+                                                                    className={`text-sm px-3 py-1.5 rounded ${optIndex === question.correct_answer_index ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" : "text-muted-foreground"}`}
+                                                                >
+                                                                    {String.fromCharCode(65 + optIndex)}. {option}
+                                                                    {optIndex === question.correct_answer_index && " ✓"}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            )
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 text-muted-foreground">
+                                        <FileQuestion className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                                        <p>No questions yet. Add your first question below.</p>
+                                    </div>
+                                )}
+
+                                {/* Add Question Section */}
+                                {addingQuestion ? (
+                                    <QuizQuestionEditor
+                                        assessmentId={quizAssessmentId || ""}
+                                        onSave={handleAddQuestion}
+                                        onCancel={() => setAddingQuestion(false)}
+                                    />
+                                ) : (
+                                    <Button onClick={() => setAddingQuestion(true)} className="w-full">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Add Question
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setQuizEditorOpen(false)}>
+                                Done
                             </Button>
                         </DialogFooter>
                     </DialogContent>

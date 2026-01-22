@@ -3,8 +3,10 @@ import { DashboardHeader } from "@/components/dashboard/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, Users, ClipboardList, MessageSquare, Calendar, TrendingUp } from "lucide-react"
+import { BookOpen, Users, ClipboardList, MessageSquare, Calendar, TrendingUp, Sparkles, Clock, CheckCircle2, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import { AdminAnalyticsCard } from "@/components/admin/analytics-card"
+import { cn } from "@/lib/utils"
 
 export default async function FacultyDashboard() {
   const supabase = await createClient()
@@ -43,224 +45,203 @@ export default async function FacultyDashboard() {
     }, 0) || 0
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-10">
       <DashboardHeader title="Faculty Dashboard" />
 
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-8 p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">Welcome, {profile?.first_name || "Professor"}!</h2>
-            <p className="text-muted-foreground">Manage your courses and students</p>
+          <div className="space-y-1">
+            <h2 className="flex items-center gap-2 text-3xl font-bold">
+              Welcome, {profile?.first_name || "Professor"} <Sparkles className="h-6 w-6 text-amber-500 animate-pulse" />
+            </h2>
+            <p className="text-muted-foreground italic font-medium">Empower your students through excellence in teaching.</p>
+          </div>
+          <div className="hidden md:block">
+            <Link href="/faculty/courses">
+              <Button className="rounded-full shadow-lg">Manage All Courses</Button>
+            </Link>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">My Courses</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{courses?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">Active courses</p>
-            </CardContent>
-          </Card>
+        {/* Stats Cards - Colorful & Premium */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <AdminAnalyticsCard
+            title="My Courses"
+            value={courses?.length || 0}
+            description="Active teaching assignments"
+            icon={BookOpen}
+            gradient="purple"
+          />
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Students</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{totalStudents}</div>
-              <p className="text-xs text-muted-foreground">Across all courses</p>
-            </CardContent>
-          </Card>
+          <AdminAnalyticsCard
+            title="Total Students"
+            value={totalStudents}
+            description="Across your enrollment groups"
+            icon={Users}
+            gradient="emerald"
+          />
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Pending Grading</CardTitle>
-              <ClipboardList className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{pendingSubmissions?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">Submissions to review</p>
-            </CardContent>
-          </Card>
+          <AdminAnalyticsCard
+            title="Pending Grading"
+            value={pendingSubmissions?.length || 0}
+            description="Assessments waiting review"
+            icon={ClipboardList}
+            gradient="gold"
+            trend={pendingSubmissions && pendingSubmissions.length > 0 ? "Action Required" : "Clean Slate"}
+            trendUp={!(pendingSubmissions && pendingSubmissions.length > 5)}
+          />
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Discussions</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">5</div>
-              <p className="text-xs text-muted-foreground">Active threads</p>
-            </CardContent>
-          </Card>
+          <AdminAnalyticsCard
+            title="Discussions"
+            value="5"
+            description="Active threads this week"
+            icon={MessageSquare}
+            gradient="cyan"
+          />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* My Courses */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>My Courses</CardTitle>
-                  <CardDescription>Courses you are currently teaching</CardDescription>
+        <div className="grid gap-8 lg:grid-cols-5">
+          {/* Active Courses */}
+          <div className="lg:col-span-3">
+            <Card className="border-none shadow-md overflow-hidden h-full">
+              <CardHeader className="bg-muted/30 pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl font-bold">Current Courses</CardTitle>
+                    <CardDescription>Courses assigned to your profile this semester</CardDescription>
+                  </div>
+                  <Link href="/faculty/courses">
+                    <Button variant="ghost" size="sm" className="hover:text-primary transition-colors">
+                      View All
+                      <ChevronRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
-                <Link href="/faculty/courses">
-                  <Button variant="outline" size="sm">
-                    View All
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {courses && courses.length > 0 ? (
-                <div className="space-y-4">
-                  {courses.slice(0, 4).map((course) => {
-                    const studentCount = new Set(course.course_enrollments?.map((e: any) => e.student_id)).size
-                    return (
-                      <div key={course.id} className="flex items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                            <BookOpen className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{course.code}</span>
-                              <Badge variant="outline">{course.credits} Credits</Badge>
+              </CardHeader>
+              <CardContent className="pt-6">
+                {courses && courses.length > 0 ? (
+                  <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                    {courses.slice(0, 4).map((course, i) => {
+                      const studentCount = new Set(course.course_enrollments?.map((e: any) => e.student_id)).size
+                      return (
+                        <div key={course.id} className="group relative flex flex-col gap-4 rounded-2xl border border-muted bg-card p-5 transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/20">
+                          <div className="flex items-center justify-between">
+                            <div className={cn(
+                              "flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:rotate-6",
+                              i % 4 === 0 ? "bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400" :
+                                i % 4 === 1 ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400" :
+                                  i % 4 === 2 ? "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400" :
+                                    "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400"
+                            )}>
+                              <BookOpen className="h-6 w-6" />
                             </div>
-                            <p className="text-sm text-muted-foreground">{course.name}</p>
+                            <div className="text-right">
+                              <p className="text-lg font-bold leading-none">{studentCount}</p>
+                              <p className="text-[10px] uppercase font-bold text-muted-foreground mt-1 tracking-wider">Students</p>
+                            </div>
                           </div>
+                          <div className="space-y-1">
+                            <p className="text-xs font-bold text-muted-foreground/70 tracking-widest uppercase">{course.code}</p>
+                            <h4 className="font-bold text-base leading-tight group-hover:text-primary transition-colors">{course.name}</h4>
+                          </div>
+                          <div className="flex items-center gap-2 pt-2">
+                            <Badge variant="secondary" className="bg-muted/50 text-[10px] px-2">{course.credits} Credits</Badge>
+                            <Badge variant="outline" className="text-[10px] px-2 truncate max-w-[120px]">{course.program?.name}</Badge>
+                          </div>
+                          <Link href={`/faculty/courses/${course.id}`} className="absolute inset-0">
+                            <span className="sr-only">Go to course</span>
+                          </Link>
                         </div>
-                        <div className="text-right">
-                          <p className="font-medium">{studentCount}</p>
-                          <p className="text-xs text-muted-foreground">Students</p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <BookOpen className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                  <p className="text-muted-foreground">No courses assigned</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                      <BookOpen className="h-10 w-10 text-muted-foreground/30" />
+                    </div>
+                    <p className="text-lg font-semibold">No courses assigned yet</p>
+                    <p className="text-sm text-muted-foreground max-w-xs mx-auto mt-2">
+                      Please contact the administration if you believe this is an error.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-          {/* Pending Grading */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Pending Grading</CardTitle>
-                  <CardDescription>Submissions awaiting your review</CardDescription>
+          <div className="lg:col-span-2 space-y-8">
+            {/* Pending Grading - Urgent Look */}
+            <Card className="border-none shadow-md overflow-hidden bg-gradient-to-br from-amber-500/5 to-transparent">
+              <CardHeader className="bg-muted/30">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <ClipboardList className="h-5 w-5 text-amber-500" />
+                    Pending Grading
+                  </CardTitle>
+                  <Link href="/faculty/gradebook">
+                    <Button variant="link" size="sm" className="h-auto p-0 text-amber-600">Review all</Button>
+                  </Link>
                 </div>
-                <Link href="/faculty/gradebook">
-                  <Button variant="outline" size="sm">
-                    Grade All
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {pendingSubmissions && pendingSubmissions.length > 0 ? (
-                <div className="space-y-4">
-                  {pendingSubmissions.map((submission: any) => (
-                    <div key={submission.id} className="flex items-center justify-between rounded-lg border p-4">
-                      <div>
-                        <p className="font-medium">{submission.assessment?.title}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {submission.student?.first_name} {submission.student?.last_name}
-                        </p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                {pendingSubmissions && pendingSubmissions.length > 0 ? (
+                  <div className="space-y-3">
+                    {pendingSubmissions.map((submission: any) => (
+                      <div key={submission.id} className="flex items-center justify-between rounded-xl border border-muted bg-card/50 p-4 transition-all hover:bg-muted/30">
+                        <div className="space-y-1">
+                          <p className="font-bold text-sm leading-none">{submission.assessment?.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Submitted by <span className="text-foreground font-medium">{submission.student?.first_name} {submission.student?.last_name}</span>
+                          </p>
+                        </div>
+                        <Link href={`/faculty/assessments/${submission.assessment?.id}/submissions/${submission.id}`}>
+                          <Button size="sm" variant="outline" className="h-8 rounded-full border-amber-500/20 text-amber-600 hover:bg-amber-50">Grade</Button>
+                        </Link>
                       </div>
-                      <Button size="sm">Grade</Button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+                      <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                    </div>
+                    <p className="text-sm font-semibold text-emerald-700">All submissions graded!</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Schedule - Branded Slots */}
+            <Card className="border-none shadow-md overflow-hidden">
+              <CardHeader className="bg-muted/30">
+                <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  Upcoming Schedule
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  {[
+                    { label: "Office Hours", place: "Virtual Meeting Room", time: "Today, 2:00 PM", color: "bg-purple-600" },
+                    { label: "BIB201 Exam Setup", place: "LMS Canvas", time: "Tomorrow", color: "bg-amber-500" },
+                    { label: "Faculty Sync", place: "Main Hall", time: "Friday, 10:00 AM", color: "bg-emerald-600" }
+                  ].map((event, i) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <div className={cn("mt-1.5 h-2 w-2 rounded-full", event.color)} />
+                      <div className="flex-1 space-y-1 border-b border-muted pb-3 last:border-0 last:pb-0">
+                        <p className="font-bold text-sm leading-none">{event.label}</p>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs text-muted-foreground">{event.place}</p>
+                          <Badge variant="outline" className="text-[10px] px-2 py-0 h-5 font-bold border-muted-foreground/10">{event.time}</Badge>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <ClipboardList className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                  <p className="text-muted-foreground">No pending submissions</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Upcoming Schedule */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Upcoming Schedule
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div>
-                    <p className="font-medium">Office Hours</p>
-                    <p className="text-sm text-muted-foreground">Virtual Meeting Room</p>
-                  </div>
-                  <Badge variant="outline">Today, 2:00 PM</Badge>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div>
-                    <p className="font-medium">BIB201 Exam Deadline</p>
-                    <p className="text-sm text-muted-foreground">Midterm Exam</p>
-                  </div>
-                  <Badge variant="outline">Tomorrow</Badge>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div>
-                    <p className="font-medium">Faculty Meeting</p>
-                    <p className="text-sm text-muted-foreground">Department Review</p>
-                  </div>
-                  <Badge variant="outline">Friday, 10:00 AM</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                <Link href="/faculty/courses">
-                  <Button variant="outline" className="h-auto w-full flex-col gap-2 p-4 bg-transparent">
-                    <BookOpen className="h-5 w-5" />
-                    <span className="text-xs">Manage Courses</span>
-                  </Button>
-                </Link>
-                <Link href="/faculty/assessments">
-                  <Button variant="outline" className="h-auto w-full flex-col gap-2 p-4 bg-transparent">
-                    <ClipboardList className="h-5 w-5" />
-                    <span className="text-xs">Create Assessment</span>
-                  </Button>
-                </Link>
-                <Link href="/faculty/gradebook">
-                  <Button variant="outline" className="h-auto w-full flex-col gap-2 p-4 bg-transparent">
-                    <TrendingUp className="h-5 w-5" />
-                    <span className="text-xs">Gradebook</span>
-                  </Button>
-                </Link>
-                <Link href="/faculty/discussions">
-                  <Button variant="outline" className="h-auto w-full flex-col gap-2 p-4 bg-transparent">
-                    <MessageSquare className="h-5 w-5" />
-                    <span className="text-xs">Discussions</span>
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

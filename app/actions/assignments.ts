@@ -15,9 +15,21 @@ interface CreateAssessmentData {
     due_date?: string
     attachment_url?: string
     submission_type: "file" | "text" | "both"
+    // Quiz-specific settings
+    time_limit_minutes?: number
+    shuffle_questions?: boolean
+    show_feedback?: boolean
 }
 
+import { createAssessmentSchema, submitAssignmentSchema, gradeSubmissionSchema } from "@/lib/validations/assessment"
+
 export async function createAssessment(data: CreateAssessmentData) {
+    const validation = createAssessmentSchema.safeParse(data)
+    if (!validation.success) {
+        return { error: validation.error.errors[0].message }
+    }
+    const validData = validation.data
+
     const supabase = await createClient()
 
     const {
@@ -32,7 +44,7 @@ export async function createAssessment(data: CreateAssessmentData) {
     const { data: course } = await supabase
         .from("courses")
         .select("instructor_id")
-        .eq("id", data.course_id)
+        .eq("id", validData.course_id)
         .single()
 
     if (!course || course.instructor_id !== user.id) {
@@ -49,20 +61,21 @@ export async function createAssessment(data: CreateAssessmentData) {
     }
 
     const { error } = await supabase.from("assessments").insert({
-        course_id: data.course_id,
-        module_id: data.module_id || null,
-        title: data.title,
-        description: data.description || null,
-        assessment_type: data.assessment_type,
-        total_points: data.total_points,
-        passing_score: data.passing_score,
-        due_date: data.due_date || null,
-        attachment_url: data.attachment_url || null,
-        submission_type: data.submission_type,
+        course_id: validData.course_id,
+        module_id: validData.module_id || null,
+        title: validData.title,
+        description: validData.description || null,
+        assessment_type: validData.assessment_type,
+        total_points: validData.total_points,
+        passing_score: validData.passing_score,
+        due_date: validData.due_date || null,
+        attachment_url: validData.attachment_url || null,
+        submission_type: validData.submission_type,
         is_published: false,
         attempts_allowed: 1,
-        shuffle_questions: false,
-        show_correct_answers: false,
+        shuffle_questions: validData.shuffle_questions ?? false,
+        show_correct_answers: validData.show_feedback ?? false,
+        time_limit_minutes: validData.time_limit_minutes || null,
     })
 
     if (error) {
@@ -70,7 +83,7 @@ export async function createAssessment(data: CreateAssessmentData) {
         return { error: "Failed to create assessment" }
     }
 
-    revalidatePath(`/faculty/courses/${data.course_id}`)
+    revalidatePath(`/faculty/courses/${validData.course_id}`)
     return { success: true }
 }
 
@@ -82,6 +95,12 @@ interface SubmitAssignmentData {
 }
 
 export async function submitAssignment(data: SubmitAssignmentData) {
+    const validation = submitAssignmentSchema.safeParse(data)
+    if (!validation.success) {
+        return { error: validation.error.errors[0].message }
+    }
+    const validData = validation.data
+
     const supabase = await createClient()
 
     const {
@@ -92,20 +111,12 @@ export async function submitAssignment(data: SubmitAssignmentData) {
         return { error: "Unauthorized" }
     }
 
-    // Validate submission data
-    if (data.submission_type === "file" && !data.file_url) {
-        return { error: "File URL is required for file submissions" }
-    }
-    if (data.submission_type === "text" && !data.content) {
-        return { error: "Content is required for text submissions" }
-    }
-
     // Check if submission already exists
-    console.log("Checking for existing submission...", { assessmentId: data.assessment_id, userId: user.id })
+    console.log("Checking for existing submission...", { assessmentId: validData.assessment_id, userId: user.id })
     const { data: existing, error: fetchError } = await supabase
         .from("assessment_submissions")
         .select("id, status")
-        .eq("assessment_id", data.assessment_id)
+        .eq("assessment_id", validData.assessment_id)
         .eq("student_id", user.id)
         .single()
 
@@ -123,9 +134,9 @@ export async function submitAssignment(data: SubmitAssignmentData) {
         const { error } = await supabase
             .from("assessment_submissions")
             .update({
-                submission_type: data.submission_type,
-                file_url: data.file_url || null,
-                content: data.content || null,
+                submission_type: validData.submission_type,
+                file_url: validData.file_url || null,
+                content: validData.content || null,
                 status: "submitted",
                 submitted_at: new Date().toISOString(),
             })
@@ -139,11 +150,11 @@ export async function submitAssignment(data: SubmitAssignmentData) {
         console.log("Creating new submission...")
         // Create new submission
         const { error } = await supabase.from("assessment_submissions").insert({
-            assessment_id: data.assessment_id,
+            assessment_id: validData.assessment_id,
             student_id: user.id,
-            submission_type: data.submission_type,
-            file_url: data.file_url || null,
-            content: data.content || null,
+            submission_type: validData.submission_type,
+            file_url: validData.file_url || null,
+            content: validData.content || null,
             status: "submitted",
         })
 
@@ -157,7 +168,7 @@ export async function submitAssignment(data: SubmitAssignmentData) {
     const { data: assessment } = await supabase
         .from("assessments")
         .select("course_id")
-        .eq("id", data.assessment_id)
+        .eq("id", validData.assessment_id)
         .single()
 
     if (assessment) {
@@ -249,7 +260,13 @@ interface GradeSubmissionData {
 }
 
 export async function gradeSubmission(data: GradeSubmissionData) {
-    console.log("Server Action: gradeSubmission started", data)
+    const validation = gradeSubmissionSchema.safeParse(data)
+    if (!validation.success) {
+        return { error: validation.error.errors[0].message }
+    }
+    const validData = validation.data
+
+    console.log("Server Action: gradeSubmission started", validData)
     const supabase = await createClient()
 
     const {
@@ -266,13 +283,13 @@ export async function gradeSubmission(data: GradeSubmissionData) {
     const { error } = await supabase
         .from("assessment_submissions")
         .update({
-            grade: data.grade,
-            feedback: data.feedback,
+            grade: validData.grade,
+            feedback: validData.feedback,
             status: "graded",
             graded_at: new Date().toISOString(),
             graded_by: user.id
         })
-        .eq("id", data.submission_id)
+        .eq("id", validData.submission_id)
 
     if (error) {
         console.error("Error grading submission:", error)
@@ -283,12 +300,12 @@ export async function gradeSubmission(data: GradeSubmissionData) {
     const { data: submission } = await supabase
         .from("assessment_submissions")
         .select("assessment_id")
-        .eq("id", data.submission_id)
+        .eq("id", validData.submission_id)
         .single()
 
     if (submission) {
         revalidatePath(`/faculty/assessments/${submission.assessment_id}`)
-        revalidatePath(`/faculty/assessments/${submission.assessment_id}/submissions/${data.submission_id}`)
+        revalidatePath(`/faculty/assessments/${submission.assessment_id}/submissions/${validData.submission_id}`)
     }
 
     return { success: true }

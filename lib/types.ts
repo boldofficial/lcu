@@ -141,6 +141,7 @@ export interface Assessment {
   is_published: boolean
   shuffle_questions: boolean
   show_correct_answers: boolean
+  show_feedback: boolean
   attachment_url: string | null
   submission_type: "file" | "text" | "both"
   created_at: string
@@ -348,4 +349,29 @@ export interface ApplicationFormData {
   gpa: number
   // Step 4: Essay
   personal_statement: string
+}
+
+export type QuestionType = "multiple_choice" | "true_false"
+
+export interface QuizQuestion {
+  id: string
+  assessment_id: string
+  question_text: string
+  question_type: QuestionType
+  options: string[]
+  correct_answer_index: number
+  points: number
+  order_index: number
+  created_at: string
+  updated_at: string
+}
+
+export interface QuizAnswer {
+  id: string
+  submission_id: string
+  question_id: string
+  selected_option_index: number
+  is_correct: boolean
+  points_earned: number
+  created_at: string
 }

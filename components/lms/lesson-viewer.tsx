@@ -1,6 +1,8 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
+import DOMPurify from "isomorphic-dompurify"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Video, FileText, Clock, CheckCircle, Download, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react"
@@ -111,8 +113,8 @@ export function LessonViewer({
           </CardHeader>
           <CardContent>
             <div
-              className="prose prose-slate max-w-none dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: lesson.content }}
+              className="prose max-w-none dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lesson.content) }}
             />
           </CardContent>
         </Card>

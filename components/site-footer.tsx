@@ -6,7 +6,7 @@ import { Facebook, Twitter, MapPin, Phone, Mail } from "lucide-react"
 
 export function SiteFooter() {
     return (
-        <footer className="bg-[#3a2857] py-16 text-white">
+        <footer className="bg-[#1a0f2e] py-16 text-white">
             <div className="mx-auto max-w-7xl px-6 md:px-12">
                 <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
                     {/* Logo */}

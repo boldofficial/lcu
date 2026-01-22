@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -8,11 +8,13 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { BookOpen, Play, CheckCircle, FileText, Video, GraduationCap, MessageSquare, ClipboardList, ArrowLeft } from "lucide-react"
-import type { Course, CourseEnrollment, Module, Lesson, Assessment, AssessmentSubmission } from "@/lib/types"
+import { BookOpen, Play, CheckCircle, FileText, Video, GraduationCap, MessageSquare, ClipboardList, ArrowLeft, Loader2 } from "lucide-react"
+import type { Course, CourseEnrollment, Module, Lesson, Assessment, QuizQuestion } from "@/lib/types"
 import { LessonViewer } from "./lesson-viewer"
 import { AssessmentCard } from "./assessment-card"
 import { AssignmentView } from "./assignment-view"
+import { QuizTaker } from "./quiz-taker"
+import { getQuizQuestions } from "@/app/actions/quiz"
 
 interface CourseContentViewProps {
   course: Course & { modules: (Module & { lessons: Lesson[] })[] }
@@ -26,6 +28,10 @@ export function CourseContentView({ course, enrollment, assessments, submissions
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
   const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null)
   const [activeTab, setActiveTab] = useState("content")
+
+  // Quiz state
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
+  const [loadingQuiz, setLoadingQuiz] = useState(false)
 
   const totalLessons = course.modules.reduce((sum, m) => sum + m.lessons.length, 0)
   const completedLessons = lessonProgress.filter(p => p.status === 'completed').length
@@ -50,6 +56,21 @@ export function CourseContentView({ course, enrollment, assessments, submissions
       setSelectedLesson(allLessons[currentLessonIndex - 1])
     }
   }
+
+  // Fetch quiz questions when a quiz assessment is selected
+  useEffect(() => {
+    if (selectedAssessment && selectedAssessment.assessment_type === 'quiz') {
+      setLoadingQuiz(true)
+      getQuizQuestions(selectedAssessment.id).then((result) => {
+        if (result.data) {
+          setQuizQuestions(result.data as QuizQuestion[])
+        }
+        setLoadingQuiz(false)
+      })
+    } else {
+      setQuizQuestions([])
+    }
+  }, [selectedAssessment])
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -202,10 +223,41 @@ export function CourseContentView({ course, enrollment, assessments, submissions
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Assessments
                 </Button>
-                <AssignmentView
-                  assessment={selectedAssessment}
-                  submission={submissions.find((s) => s.assessment_id === selectedAssessment.id) || null}
-                />
+
+                {/* Quiz Assessment */}
+                {selectedAssessment.assessment_type === 'quiz' ? (
+                  loadingQuiz ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : quizQuestions.length > 0 ? (
+                    <QuizTaker
+                      assessmentId={selectedAssessment.id}
+                      assessmentTitle={selectedAssessment.title}
+                      questions={quizQuestions}
+                      totalPoints={selectedAssessment.total_points}
+                      passingScore={selectedAssessment.passing_score}
+                      dueDate={selectedAssessment.due_date || undefined}
+                      timeLimitMinutes={selectedAssessment.time_limit_minutes}
+                      shuffleQuestions={selectedAssessment.shuffle_questions}
+                      showFeedback={selectedAssessment.show_feedback !== false}
+                    />
+                  ) : (
+                    <Card>
+                      <CardContent className="flex flex-col items-center justify-center py-12">
+                        <ClipboardList className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                        <p className="text-muted-foreground">No questions available for this quiz</p>
+                        <p className="text-sm text-muted-foreground mt-1">The instructor has not added questions yet.</p>
+                      </CardContent>
+                    </Card>
+                  )
+                ) : (
+                  /* Assignment/Exam Assessment */
+                  <AssignmentView
+                    assessment={selectedAssessment}
+                    submission={submissions.find((s) => s.assessment_id === selectedAssessment.id) || null}
+                  />
+                )}
               </div>
             ) : (
               <div className="space-y-6">

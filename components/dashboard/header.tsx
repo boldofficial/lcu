@@ -1,18 +1,12 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Bell, Search, Menu, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
+import { createClient } from "@/lib/supabase/client"
+import { NotificationBell } from "@/components/notifications/notification-bell"
 
 interface Breadcrumb {
   label: string
@@ -26,6 +20,19 @@ interface HeaderProps {
 }
 
 export function DashboardHeader({ title, breadcrumbs, onMenuClick }: HeaderProps) {
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserId(user.id)
+      }
+    }
+    fetchUser()
+  }, [])
+
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-card px-4 md:px-6">
       <div className="flex items-center gap-4">
@@ -59,31 +66,8 @@ export function DashboardHeader({ title, breadcrumbs, onMenuClick }: HeaderProps
           <Input placeholder="Search..." className="h-9 w-64 pl-9" />
         </div>
 
-        {/* Notifications */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative" suppressHydrationWarning>
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs">3</Badge>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex flex-col items-start gap-1 p-3">
-              <span className="font-medium">New Course Available</span>
-              <span className="text-xs text-muted-foreground">BIB301 - Hermeneutics is now open for enrollment</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start gap-1 p-3">
-              <span className="font-medium">Payment Reminder</span>
-              <span className="text-xs text-muted-foreground">Your next installment is due in 5 days</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start gap-1 p-3">
-              <span className="font-medium">Assignment Graded</span>
-              <span className="text-xs text-muted-foreground">Your submission for THE201 has been graded</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Dynamic Notifications */}
+        {userId && <NotificationBell userId={userId} />}
       </div>
     </header>
   )
